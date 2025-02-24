@@ -40,9 +40,14 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: This commit message
+        run: echo "${{ github.event.commits[0].message }}"
+      - name: Have this commit \#skip in his name?
+        run: echo "${{ contains(github.event.commits[0].message , '\#skip' )}}"
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && !contains(github.event.commits[0].message , '\#skip' ) }}
         uses: anothrNick/github-tag-action@1.71.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+          DRY_RUN: true
